@@ -1,3 +1,21 @@
 .table-custom th, .table-custom td {
   vertical-align: middle;
 }
+
+.table-custom th {
+  background-color: #f0f0f0;
+}
+
+#scoreboard {
+  overflow-x: auto;
+}
+
+.champion-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.item-icon {
+  width: 24px;
+  height: 24px;
+}
