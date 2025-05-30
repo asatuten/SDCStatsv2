@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h1 class="mb-4">Player Lookup</h1>
+<form id="playerForm" class="mb-3">
+  <div class="row g-2">
+    <div class="col-auto">
+      <input type="text" class="form-control" id="playerRegion" placeholder="Region (na1)" value="na1">
+    </div>
+    <div class="col-auto">
+      <input type="text" class="form-control" id="riotId" placeholder="Riot ID (name#TAG)">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Lookup</button>
+    </div>
+  </div>
+</form>
+<pre id="playerOutput"></pre>
+<div id="matches"></div>
+{% endblock %}
