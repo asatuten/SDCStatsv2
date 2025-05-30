@@ -40,11 +40,14 @@ function displayScoreboard(data, region) {
         const riotId = `${riotName}#${riotTag}`;
         const link = document.createElement('a');
         link.href = `/player?region=${encodeURIComponent(region)}&riot_id=${encodeURIComponent(riotId)}`;
-        link.textContent = p.summonerName;
+
+        link.textContent = riotId;
+
         summonerTd.appendChild(link);
       } else {
         summonerTd.textContent = p.summonerName;
       }
+      row.appendChild(summonerTd);
 
       const champTd = document.createElement('td');
       const champImg = document.createElement('img');
@@ -54,29 +57,29 @@ function displayScoreboard(data, region) {
       champTd.appendChild(champImg);
       champTd.appendChild(document.createTextNode(p.championName));
 
+      row.appendChild(champTd);
+
+      // KDA column
       const kdaTd = document.createElement('td');
       kdaTd.textContent = `${p.kills} / ${p.deaths} / ${p.assists}`;
+      row.appendChild(kdaTd);
 
+      // CS column
       const csTd = document.createElement('td');
       csTd.textContent = p.totalMinionsKilled;
+      row.appendChild(csTd);
 
+      // Items column
       const itemsTd = document.createElement('td');
       const items = [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5];
-
       items.forEach(id => {
-        if (id) {
-          const img = document.createElement('img');
-          img.className = 'item-icon me-1';
-          img.src = `${itemBase}${id}.png`;
-          img.alt = '';
-          itemsTd.appendChild(img);
-        }
+        if (!id) return;
+        const itemImg = document.createElement('img');
+        itemImg.className = 'item-icon me-1';
+        itemImg.src = `${itemBase}${id}.png`;
+        itemImg.alt = '';
+        itemsTd.appendChild(itemImg);
       });
-
-      row.appendChild(summonerTd);
-      row.appendChild(champTd);
-      row.appendChild(kdaTd);
-      row.appendChild(csTd);
       row.appendChild(itemsTd);
 
 
@@ -139,18 +142,19 @@ function displayMatches(data, region) {
     link.textContent = m.match_id;
     matchTd.appendChild(link);
 
+    row.appendChild(matchTd);
+
     const champTd = document.createElement('td');
     champTd.textContent = m.champion;
+    row.appendChild(champTd);
 
     const kdaTd = document.createElement('td');
     kdaTd.textContent = `${m.kills} / ${m.deaths} / ${m.assists}`;
+    row.appendChild(kdaTd);
 
     const resultTd = document.createElement('td');
     resultTd.textContent = m.win ? 'Win' : 'Loss';
 
-    row.appendChild(matchTd);
-    row.appendChild(champTd);
-    row.appendChild(kdaTd);
     row.appendChild(resultTd);
 
     tbody.appendChild(row);
