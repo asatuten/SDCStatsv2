@@ -1,0 +1,10 @@
+# Ignore build outputs
+bin/
+obj/
+# Ignore user secrets
+*.user
+*.rsuser
+*.suo
+*.userprefs
+# Ignore VS Code settings
+.vscode/
