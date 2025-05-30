@@ -34,3 +34,20 @@ This will print the JSON match data for the given match ID to stdout.
 
 - Custom games can be queried the same way as any other match. Once you have the match ID(s) for your custom games, pass them to `main.py`.
 - This template focuses on fetching match data. You can extend it to store results in a database or perform any additional analysis you need.
+
+## Web App
+
+The `webapp` directory contains a small Flask application that renders a
+demo player profile page using the mock data in `mock_data.json`.
+
+1. From the project root, start the app:
+
+   ```bash
+   cd webapp
+   python app.py
+   ```
+
+2. Open `http://127.0.0.1:5000/` in your browser to view the page.
+
+The app does not require a Riot API key because it reads from
+`mock_data.json`. You can modify `app.py` to query the real API if desired.
