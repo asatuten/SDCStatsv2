@@ -1,6 +1,9 @@
 import os
 from typing import Dict, Any, List
 
+from urllib.parse import quote
+
+
 import requests
 
 
@@ -45,7 +48,14 @@ class RiotAPI:
 
     def get_account_by_riot_id(self, game_name: str, tag_line: str) -> Dict[str, Any]:
         """Fetch account information using Riot ID."""
-        url = f"https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}"
+
+        game_name_q = quote(game_name, safe='')
+        tag_line_q = quote(tag_line, safe='')
+        url = (
+            "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
+            f"{game_name_q}/{tag_line_q}"
+        )
+
         resp = requests.get(url, headers=self._headers(), timeout=10)
         resp.raise_for_status()
         return resp.json()

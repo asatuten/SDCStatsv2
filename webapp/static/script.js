@@ -49,31 +49,34 @@ function displayScoreboard(data) {
   });
 }
 
-document.getElementById('matchForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const region = document.getElementById('region').value;
-  const matchId = document.getElementById('matchId').value.trim();
-  const output = document.getElementById('matchOutput');
-  if (!region || !matchId) {
-    output.textContent = 'Region and Match ID are required';
-    return;
-  }
-  output.textContent = 'Loading...';
-  scoreboard.innerHTML = '';
-  fetch(`/api/match?region=${encodeURIComponent(region)}&match_id=${encodeURIComponent(matchId)}`)
-    .then(r => r.json())
-    .then(data => {
-      output.textContent = '';
-      if (data.error) {
-        output.textContent = 'Error: ' + data.error;
-        return;
-      }
-      displayScoreboard(data);
-    })
-    .catch(err => {
-      output.textContent = 'Error: ' + err;
-    });
-});
+const matchForm = document.getElementById('matchForm');
+if (matchForm) {
+  matchForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const region = document.getElementById('region').value;
+    const matchId = document.getElementById('matchId').value.trim();
+    const output = document.getElementById('matchOutput');
+    if (!region || !matchId) {
+      output.textContent = 'Region and Match ID are required';
+      return;
+    }
+    output.textContent = 'Loading...';
+    scoreboard && (scoreboard.innerHTML = '');
+    fetch(`/api/match?region=${encodeURIComponent(region)}&match_id=${encodeURIComponent(matchId)}`)
+      .then(r => r.json())
+      .then(data => {
+        output.textContent = '';
+        if (data.error) {
+          output.textContent = 'Error: ' + data.error;
+          return;
+        }
+        displayScoreboard(data);
+      })
+      .catch(err => {
+        output.textContent = 'Error: ' + err;
+      });
+  });
+}
 
 const matchesEl = document.getElementById('matches');
 
