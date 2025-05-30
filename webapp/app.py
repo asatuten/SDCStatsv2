@@ -1,15 +1,12 @@
-from flask import Flask, render_template, jsonify
-import json
-import os
+from flask import Flask, render_template, jsonify, request
+from dotenv import load_dotenv
+from riot_api import RiotAPI
+
+load_dotenv()  # load environment variables from .env if present
 
 app = Flask(__name__)
 
-MOCK_DATA_PATH = os.path.join(os.path.dirname(__file__), 'mock_data.json')
-
-
-def load_data():
-    with open(MOCK_DATA_PATH, 'r', encoding='utf-8') as f:
-        return json.load(f)
+api = RiotAPI()
 
 
 @app.route('/')
@@ -17,9 +14,16 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/api/profile')
-def profile_data():
-    data = load_data()
+@app.route('/api/match')
+def match_data():
+    match_id = request.args.get('match_id')
+    region = request.args.get('region')
+    if not match_id or not region:
+        return jsonify({'error': 'match_id and region parameters are required'}), 400
+    try:
+        data = api.get_match(region, match_id)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     return jsonify(data)
 
 

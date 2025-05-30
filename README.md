@@ -37,17 +37,18 @@ This will print the JSON match data for the given match ID to stdout.
 
 ## Web App
 
-The `webapp` directory contains a small Flask application that renders a
-demo player profile page using the mock data in `mock_data.json`.
+The `webapp` directory now contains a small Flask application that queries the
+real Riot API.
 
-1. From the project root, start the app:
+1. Ensure a `.env` file exists with your `RIOT_API_KEY` value. The app will load
+   it automatically via `python-dotenv`.
+
+2. From the project root, start the app:
 
    ```bash
    cd webapp
    python app.py
    ```
 
-2. Open `http://127.0.0.1:5000/` in your browser to view the page.
-
-The app does not require a Riot API key because it reads from
-`mock_data.json`. You can modify `app.py` to query the real API if desired.
+3. Open `http://127.0.0.1:5000/` in your browser. Enter a region and match ID to
+   fetch the match data from the Riot API.
