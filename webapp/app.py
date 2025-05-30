@@ -38,7 +38,8 @@ def match_data():
     if not match_id or not region:
         return jsonify({'error': 'match_id and region parameters are required'}), 400
     try:
-        data = api.get_match(region, match_id)
+        # Use the routing cluster (e.g. "americas") for match requests
+        data = api.get_match(api._cluster(region), match_id)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     return jsonify(data)

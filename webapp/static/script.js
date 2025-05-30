@@ -1,6 +1,6 @@
 const scoreboard = document.getElementById('scoreboard');
 
-function displayScoreboard(data) {
+function displayScoreboard(data, region) {
   scoreboard.innerHTML = '';
   if (!data.info || !Array.isArray(data.info.participants)) {
     scoreboard.textContent = 'Unexpected match data';
@@ -33,14 +33,50 @@ function displayScoreboard(data) {
     players.forEach(p => {
       const row = document.createElement('tr');
 
-      const champImg = `<img class="champion-icon me-1" src="${champBase}${p.championName}.png" alt="${p.championName}">`;
+      const summonerTd = document.createElement('td');
+      const riotName = p.riotIdGameName || p.riotIdName;
+      const riotTag = p.riotIdTagline;
+      if (riotName && riotTag) {
+        const riotId = `${riotName}#${riotTag}`;
+        const link = document.createElement('a');
+        link.href = `/player?region=${encodeURIComponent(region)}&riot_id=${encodeURIComponent(riotId)}`;
+        link.textContent = p.summonerName;
+        summonerTd.appendChild(link);
+      } else {
+        summonerTd.textContent = p.summonerName;
+      }
+
+      const champTd = document.createElement('td');
+      const champImg = document.createElement('img');
+      champImg.className = 'champion-icon me-1';
+      champImg.src = `${champBase}${p.championName}.png`;
+      champImg.alt = p.championName;
+      champTd.appendChild(champImg);
+      champTd.appendChild(document.createTextNode(p.championName));
+
+      const kdaTd = document.createElement('td');
+      kdaTd.textContent = `${p.kills} / ${p.deaths} / ${p.assists}`;
+
+      const csTd = document.createElement('td');
+      csTd.textContent = p.totalMinionsKilled;
+
+      const itemsTd = document.createElement('td');
       const items = [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5];
-      const itemImgs = items.map(id => id ? `<img class="item-icon me-1" src="${itemBase}${id}.png" alt="">` : '').join('');
-      row.innerHTML = `<td>${p.summonerName}</td>` +
-                      `<td>${champImg}${p.championName}</td>` +
-                      `<td>${p.kills} / ${p.deaths} / ${p.assists}</td>` +
-                      `<td>${p.totalMinionsKilled}</td>` +
-                      `<td>${itemImgs}</td>`;
+      items.forEach(id => {
+        if (id) {
+          const img = document.createElement('img');
+          img.className = 'item-icon me-1';
+          img.src = `${itemBase}${id}.png`;
+          img.alt = '';
+          itemsTd.appendChild(img);
+        }
+      });
+
+      row.appendChild(summonerTd);
+      row.appendChild(champTd);
+      row.appendChild(kdaTd);
+      row.appendChild(csTd);
+      row.appendChild(itemsTd);
 
       tbody.appendChild(row);
     });
@@ -70,7 +106,7 @@ if (matchForm) {
           output.textContent = 'Error: ' + data.error;
           return;
         }
-        displayScoreboard(data);
+        displayScoreboard(data, region);
       })
       .catch(err => {
         output.textContent = 'Error: ' + err;
@@ -80,7 +116,7 @@ if (matchForm) {
 
 const matchesEl = document.getElementById('matches');
 
-function displayMatches(data) {
+function displayMatches(data, region) {
   matchesEl.innerHTML = '';
   if (!data.matches || !Array.isArray(data.matches)) {
     matchesEl.textContent = 'Unexpected player data';
@@ -94,10 +130,26 @@ function displayMatches(data) {
   const tbody = document.createElement('tbody');
   data.matches.forEach(m => {
     const row = document.createElement('tr');
-    row.innerHTML = `<td>${m.match_id}</td>` +
-                    `<td>${m.champion}</td>` +
-                    `<td>${m.kills} / ${m.deaths} / ${m.assists}</td>` +
-                    `<td>${m.win ? 'Win' : 'Loss'}</td>`;
+
+    const matchTd = document.createElement('td');
+    const link = document.createElement('a');
+    link.href = `/?region=${encodeURIComponent(region)}&match_id=${encodeURIComponent(m.match_id)}`;
+    link.textContent = m.match_id;
+    matchTd.appendChild(link);
+
+    const champTd = document.createElement('td');
+    champTd.textContent = m.champion;
+
+    const kdaTd = document.createElement('td');
+    kdaTd.textContent = `${m.kills} / ${m.deaths} / ${m.assists}`;
+
+    const resultTd = document.createElement('td');
+    resultTd.textContent = m.win ? 'Win' : 'Loss';
+
+    row.appendChild(matchTd);
+    row.appendChild(champTd);
+    row.appendChild(kdaTd);
+    row.appendChild(resultTd);
     tbody.appendChild(row);
   });
 
@@ -126,10 +178,28 @@ if (playerForm) {
           out.textContent = 'Error: ' + data.error;
           return;
         }
-        displayMatches(data);
+        displayMatches(data, region);
       })
       .catch(err => {
         out.textContent = 'Error: ' + err;
       });
   });
 }
+
+// Auto-fetch data when query parameters are present
+document.addEventListener('DOMContentLoaded', function() {
+  const params = new URLSearchParams(window.location.search);
+  const regionParam = params.get('region');
+  const matchIdParam = params.get('match_id') || params.get('matchId');
+  if (matchForm && matchIdParam) {
+    if (regionParam) document.getElementById('region').value = regionParam;
+    document.getElementById('matchId').value = matchIdParam;
+    matchForm.dispatchEvent(new Event('submit'));
+  }
+  const riotIdParam = params.get('riot_id') || params.get('riotId');
+  if (playerForm && riotIdParam) {
+    if (regionParam) document.getElementById('playerRegion').value = regionParam;
+    document.getElementById('riotId').value = riotIdParam;
+    playerForm.dispatchEvent(new Event('submit'));
+  }
+});
