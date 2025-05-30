@@ -33,7 +33,6 @@ function displayScoreboard(data, region) {
     players.forEach(p => {
       const row = document.createElement('tr');
 
-      // Summoner column with link if Riot ID available
       const summonerTd = document.createElement('td');
       const riotName = p.riotIdGameName || p.riotIdName;
       const riotTag = p.riotIdTagline;
@@ -41,14 +40,15 @@ function displayScoreboard(data, region) {
         const riotId = `${riotName}#${riotTag}`;
         const link = document.createElement('a');
         link.href = `/player?region=${encodeURIComponent(region)}&riot_id=${encodeURIComponent(riotId)}`;
+
         link.textContent = riotId;
+
         summonerTd.appendChild(link);
       } else {
         summonerTd.textContent = p.summonerName;
       }
       row.appendChild(summonerTd);
 
-      // Champion column
       const champTd = document.createElement('td');
       const champImg = document.createElement('img');
       champImg.className = 'champion-icon me-1';
@@ -56,6 +56,7 @@ function displayScoreboard(data, region) {
       champImg.alt = p.championName;
       champTd.appendChild(champImg);
       champTd.appendChild(document.createTextNode(p.championName));
+
       row.appendChild(champTd);
 
       // KDA column
@@ -80,6 +81,7 @@ function displayScoreboard(data, region) {
         itemsTd.appendChild(itemImg);
       });
       row.appendChild(itemsTd);
+
 
       tbody.appendChild(row);
     });
@@ -139,6 +141,7 @@ function displayMatches(data, region) {
     link.href = `/?region=${encodeURIComponent(region)}&match_id=${encodeURIComponent(m.match_id)}`;
     link.textContent = m.match_id;
     matchTd.appendChild(link);
+
     row.appendChild(matchTd);
 
     const champTd = document.createElement('td');
@@ -151,6 +154,7 @@ function displayMatches(data, region) {
 
     const resultTd = document.createElement('td');
     resultTd.textContent = m.win ? 'Win' : 'Loss';
+
     row.appendChild(resultTd);
 
     tbody.appendChild(row);
