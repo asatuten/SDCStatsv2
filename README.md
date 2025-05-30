@@ -40,5 +40,7 @@ The `src/WebApp` directory now uses ASP.NET Core MVC. Controllers provide API en
    ```
 
 3. Open `http://localhost:5000/` in your browser. Enter a region and match ID to fetch match data.
+
 4. A Player Lookup page is available at `/player` where you can enter a Riot ID (`name#TAG`) to see recent matches. You can also specify how many games to fetch and filter them by champion, result or minimum KDA.
 5. The scoreboard now calculates additional statistics like KDA ratio, CS per minute, kill participation and damage per minute for each participant. The match view also shows queue type, start time and duration.
+

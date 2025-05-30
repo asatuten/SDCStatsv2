@@ -37,6 +37,7 @@ public class ApiController : ControllerBase
     public async Task<IActionResult> GetPlayer([FromQuery] string region,
         [FromQuery(Name = "riot_id")] string riotId,
         [FromQuery] int count = 10)
+
     {
         if (string.IsNullOrEmpty(region) || string.IsNullOrEmpty(riotId))
         {
@@ -58,12 +59,14 @@ public class ApiController : ControllerBase
             {
                 return Ok(new { matches = Array.Empty<object>() });
             }
+
             if (count < 1)
                 count = 1;
             if (count > 100)
                 count = 100;
 
             var matchIds = await _api.GetMatchesForPuuidAsync(region, puuid, count);
+
             var matches = new List<object>();
             foreach (var id in matchIds)
             {
