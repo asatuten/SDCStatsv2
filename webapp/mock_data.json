@@ -1,0 +1,72 @@
+{
+  "player": {
+    "name": "Summoner1",
+    "general": {
+      "winRate": 55.2,
+      "kda": "3.2",
+      "cs": 175.3,
+      "gold": 14250,
+      "damage": 21500
+    },
+    "champions": [
+      {
+        "name": "Aatrox",
+        "games": 10,
+        "winRate": 60.0,
+        "kda": "3.5",
+        "cs": 180.1,
+        "gold": 14500
+      },
+      {
+        "name": "Ahri",
+        "games": 8,
+        "winRate": 50.0,
+        "kda": "2.8",
+        "cs": 170.3,
+        "gold": 13800
+      },
+      {
+        "name": "Jinx",
+        "games": 5,
+        "winRate": 40.0,
+        "kda": "2.1",
+        "cs": 190.4,
+        "gold": 15000
+      }
+    ],
+    "matches": [
+      {
+        "date": "2023-05-01",
+        "opponent": "PlayerA",
+        "result": "Win"
+      },
+      {
+        "date": "2023-05-02",
+        "opponent": "PlayerB",
+        "result": "Loss"
+      },
+      {
+        "date": "2023-05-03",
+        "opponent": "PlayerC",
+        "result": "Win"
+      }
+    ],
+    "winRateHistory": [
+      {"date": "2023-04-01", "winRate": 52},
+      {"date": "2023-05-01", "winRate": 55},
+      {"date": "2023-06-01", "winRate": 57}
+    ],
+    "roleDistribution": {
+      "Top": 40,
+      "Jungle": 30,
+      "Mid": 10,
+      "ADC": 15,
+      "Support": 5
+    },
+    "objectiveControl": {
+      "dragons": 5,
+      "barons": 2,
+      "towers": 25
+    }
+  }
+}
