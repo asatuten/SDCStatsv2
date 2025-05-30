@@ -1,3 +1,7 @@
 .table-custom th, .table-custom td {
   vertical-align: middle;
 }
+
+#scoreboard {
+  overflow-x: auto;
+}
