@@ -11,7 +11,6 @@ public class HomeController : Controller
 
     public IActionResult Player()
     {
-        Console.WriteLine("HITTING PLAYER VIEW");
         return View();
     }
 }

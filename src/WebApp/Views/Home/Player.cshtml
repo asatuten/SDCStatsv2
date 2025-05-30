@@ -13,19 +13,44 @@
 <body>
   <div class="container my-4">
     <h1 class="mb-4">Player Lookup</h1>
-    <form id="playerForm" class="mb-3">
-      <div class="row g-2">
-        <div class="col-auto">
-          <input type="text" class="form-control" id="playerRegion" placeholder="Region (na1)" value="na1">
+      <form id="playerForm" class="mb-3">
+        <div class="row g-2">
+          <div class="col-auto">
+            <input type="text" class="form-control" id="playerRegion" placeholder="Region (na1)" value="na1">
+          </div>
+          <div class="col-auto">
+            <input type="text" class="form-control" id="riotId" placeholder="Riot ID (name#TAG)">
+          </div>
+          <div class="col-auto">
+            <input type="number" class="form-control" id="matchCount" value="10" min="1" max="100">
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Lookup</button>
+          </div>
         </div>
-        <div class="col-auto">
-          <input type="text" class="form-control" id="riotId" placeholder="Riot ID (name#TAG)">
-        </div>
-        <div class="col-auto">
-          <button type="submit" class="btn btn-primary">Lookup</button>
+      </form>
+
+      <div id="filterPanel" class="mb-3" style="display:none;">
+        <div class="row g-2">
+          <div class="col-auto">
+            <input type="text" class="form-control" id="filterChampion" placeholder="Champion">
+          </div>
+          <div class="col-auto">
+            <select class="form-select" id="filterResult">
+              <option value="">All Results</option>
+              <option value="win">Wins</option>
+              <option value="loss">Losses</option>
+            </select>
+          </div>
+          <div class="col-auto">
+            <input type="number" step="0.1" class="form-control" id="filterKda" placeholder="Min KDA">
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-secondary" id="applyFilters">Filter</button>
+          </div>
         </div>
       </div>
-    </form>
+
     <pre id="playerOutput"></pre>
     <div id="matches"></div>
   </div>
