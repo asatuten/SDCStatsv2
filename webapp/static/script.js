@@ -62,6 +62,7 @@ function displayScoreboard(data, region) {
 
       const itemsTd = document.createElement('td');
       const items = [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5];
+
       items.forEach(id => {
         if (id) {
           const img = document.createElement('img');
@@ -77,6 +78,7 @@ function displayScoreboard(data, region) {
       row.appendChild(kdaTd);
       row.appendChild(csTd);
       row.appendChild(itemsTd);
+
 
       tbody.appendChild(row);
     });
@@ -150,6 +152,7 @@ function displayMatches(data, region) {
     row.appendChild(champTd);
     row.appendChild(kdaTd);
     row.appendChild(resultTd);
+
     tbody.appendChild(row);
   });
 
