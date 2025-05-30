@@ -12,7 +12,7 @@ function displayScoreboard(data) {
     teams[p.teamId].push(p);
   });
 
-  const ddragonVersion = '13.24.1';
+  const ddragonVersion = '15.11.1';
   const champBase = `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/champion/`;
   const itemBase = `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/item/`;
 
