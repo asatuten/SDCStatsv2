@@ -1,8 +1,19 @@
 from flask import Flask, render_template, jsonify, request
 from dotenv import load_dotenv
+
+import sys
+from pathlib import Path
+
+# Ensure the repo root is on the Python path so `riot_api` can be imported when
+# running this file directly from the `webapp` directory.
+ROOT_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT_DIR))
+
 from riot_api import RiotAPI
 
-load_dotenv()  # load environment variables from .env if present
+# Load environment variables from the repository's `.env` file if present.
+load_dotenv(ROOT_DIR / ".env")
+
 
 app = Flask(__name__)
 

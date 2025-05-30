@@ -43,11 +43,11 @@ real Riot API.
 1. Ensure a `.env` file exists with your `RIOT_API_KEY` value. The app will load
    it automatically via `python-dotenv`.
 
-2. From the project root, start the app:
+2. From the project root, start the app using the module syntax so that
+   the `riot_api` package and `.env` file are correctly discovered:
 
    ```bash
-   cd webapp
-   python app.py
+   python -m webapp.app
    ```
 
 3. Open `http://127.0.0.1:5000/` in your browser. Enter a region and match ID to
