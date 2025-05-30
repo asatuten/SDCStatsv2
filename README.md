@@ -56,3 +56,7 @@ real Riot API.
 The homepage now renders a scoreboard for each team, similar to popular match
 history sites. Player names, champion icons, K/D/A, creep score and item builds
 are shown in tables after the match data is fetched.
+
+There is also a Player Lookup page at `/player` where you can enter a region and
+a Riot ID (`name#TAG`). The app fetches the last 10 games for that player and
+displays basic stats for each match.
