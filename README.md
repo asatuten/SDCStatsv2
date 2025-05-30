@@ -1,62 +1,43 @@
-# SDCStatsv2
+# SDCStatsv2 (.NET Edition)
 
-This repository provides a simple Python template for fetching match data from the Riot Games API.  
-You can supply your Riot API key via the `RIOT_API_KEY` environment variable or with the `--api-key` command line flag.
+This repository provides a minimal C# implementation for fetching match data from the Riot Games API. A console program and a small ASP.NET Core web application are included. Supply your Riot API key via the `RIOT_API_KEY` environment variable or with the `--api-key` command line flag.
 
 ## Setup
 
-1. Create a Python virtual environment (optional but recommended).
-2. Install dependencies:
+1. Install the .NET 6 SDK.
+2. Restore the projects:
    ```bash
-   pip install -r requirements.txt
+   dotnet restore
    ```
 
-## Usage
+## Console Usage
 
-Run the `main.py` script with a region code and one or more match IDs. For example:
+Run the console application with a region code and one or more match IDs. For example:
 
 ```bash
-python main.py na1 <match_id1> <match_id2>
+dotnet run --project src/RiotConsole na1 <match_id1> <match_id2>
 ```
 
-Replace `<match_id1>` and `<match_id2>` with the match IDs you want to fetch. You can also specify `--output mydata.json` to write the results to a file.
+Add `--output mydata.json` to write the results to a file.
 
 ## Example
 
 ```bash
 export RIOT_API_KEY=your_api_key_here
-python main.py na1 ABCDEFGHIJKLMN
+dotnet run --project src/RiotConsole na1 ABCDEFGHIJKLMN
 ```
 
-This will print the JSON match data for the given match ID to stdout.
-
-## Notes
-
-- Custom games can be queried the same way as any other match. Once you have the match ID(s) for your custom games, pass them to `main.py`.
-- This template focuses on fetching match data. You can extend it to store results in a database or perform any additional analysis you need.
+This prints the JSON match data for the given match ID to stdout.
 
 ## Web App
 
-The `webapp` directory now contains a small Flask application that queries the
-real Riot API.
+The `src/WebApp` directory contains a small ASP.NET Core application that mirrors the original Flask app.
 
-1. Ensure a `.env` file exists with your `RIOT_API_KEY` value. The app will load
-   it automatically via `python-dotenv`.
-
-2. From the project root, start the app using the module syntax so that
-   the `riot_api` package and `.env` file are correctly discovered:
-
+1. Ensure your `RIOT_API_KEY` is available in the environment.
+2. Start the web server:
    ```bash
-   python -m webapp.app
+   dotnet run --project src/WebApp
    ```
 
-3. Open `http://127.0.0.1:5000/` in your browser. Enter a region and match ID to
-   fetch the match data from the Riot API.
-
-The homepage now renders a scoreboard for each team, similar to popular match
-history sites. Player names, champion icons, K/D/A, creep score and item builds
-are shown in tables after the match data is fetched.
-
-There is also a Player Lookup page at `/player` where you can enter a region and
-a Riot ID (`name#TAG`). The app fetches the last 10 games for that player and
-displays basic stats for each match.
+3. Open `http://localhost:5000/` in your browser. Enter a region and match ID to fetch match data.
+4. A Player Lookup page is available at `/player` where you can enter a Riot ID (`name#TAG`) to see recent matches.
