@@ -53,6 +53,6 @@ real Riot API.
 3. Open `http://127.0.0.1:5000/` in your browser. Enter a region and match ID to
    fetch the match data from the Riot API.
 
-The homepage now renders a simple scoreboard for each team, similar to popular
-match history sites. Player names, champions, K/D/A and creep score are shown in
-tables after the match data is fetched.
+The homepage now renders a scoreboard for each team, similar to popular match
+history sites. Player names, champion icons, K/D/A, creep score and item builds
+are shown in tables after the match data is fetched.
