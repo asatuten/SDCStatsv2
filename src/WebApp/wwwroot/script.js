@@ -1,4 +1,9 @@
 const scoreboard = document.getElementById('scoreboard');
+const ddragonVersion = '15.11.1';
+const champBase = `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/champion/`;
+const itemBase = `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/item/`;
+const queueNames = { 420: 'Ranked Solo/Duo', 440: 'Ranked Flex', 400: 'Draft Pick', 430: 'Blind Pick', 450: 'ARAM' };
+let allMatches = [];
 
 function displayScoreboard(data, region) {
   scoreboard.innerHTML = '';
@@ -7,14 +12,21 @@ function displayScoreboard(data, region) {
     return;
   }
 
+  // Match summary
+  const info = data.info;
+  const start = new Date(info.gameStartTimestamp || info.gameCreation);
+  const durMin = Math.floor(info.gameDuration / 60);
+  const durSec = info.gameDuration % 60;
+  const queue = queueNames[info.queueId] || `Queue ${info.queueId}`;
+  const summary = document.createElement('div');
+  summary.className = 'mb-2';
+  summary.textContent = `${queue} • ${start.toLocaleString()} • Duration ${durMin}:${durSec.toString().padStart(2,'0')} • ${info.gameMode}`;
+  scoreboard.appendChild(summary);
+
   const teams = { 100: [], 200: [] };
   data.info.participants.forEach(p => {
     teams[p.teamId].push(p);
   });
-
-  const ddragonVersion = '15.11.1';
-  const champBase = `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/champion/`;
-  const itemBase = `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/item/`;
 
   Object.entries(teams).forEach(([teamId, players]) => {
     const header = document.createElement('h3');
@@ -25,11 +37,12 @@ function displayScoreboard(data, region) {
     table.className = 'table table-custom table-striped mb-4';
 
     const thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th>Summoner</th><th>Champion</th><th>K / D / A</th><th>CS</th><th>Items</th></tr>';
+    thead.innerHTML = '<tr><th>Summoner</th><th>Champion</th><th>K / D / A</th><th>KDA</th><th>CS</th><th>CS/Min</th><th>KP%</th><th>DMG/Min</th><th>Items</th></tr>';
 
     table.appendChild(thead);
 
     const tbody = document.createElement('tbody');
+    const teamKills = players.reduce((sum, x) => sum + x.kills, 0);
     players.forEach(p => {
       const row = document.createElement('tr');
 
@@ -59,15 +72,40 @@ function displayScoreboard(data, region) {
 
       row.appendChild(champTd);
 
-      // KDA column
+      // K/D/A column
       const kdaTd = document.createElement('td');
       kdaTd.textContent = `${p.kills} / ${p.deaths} / ${p.assists}`;
       row.appendChild(kdaTd);
 
+      // KDA ratio
+      const ratioTd = document.createElement('td');
+      const ratio = ( (p.kills + p.assists) / Math.max(1, p.deaths) ).toFixed(2);
+      ratioTd.textContent = ratio;
+      row.appendChild(ratioTd);
+
       // CS column
+      const csCount = p.totalMinionsKilled + (p.neutralMinionsKilled || 0);
       const csTd = document.createElement('td');
-      csTd.textContent = p.totalMinionsKilled;
+      csTd.textContent = csCount;
       row.appendChild(csTd);
+
+      // CS per minute
+      const cspmTd = document.createElement('td');
+      const csPerMin = csCount / (p.timePlayed / 60);
+      cspmTd.textContent = csPerMin.toFixed(1);
+      row.appendChild(cspmTd);
+
+      // Kill participation
+      const kpTd = document.createElement('td');
+      const kp = teamKills > 0 ? ((p.kills + p.assists) / teamKills) * 100 : 0;
+      kpTd.textContent = Math.round(kp);
+      row.appendChild(kpTd);
+
+      // Damage per minute
+      const dmgTd = document.createElement('td');
+      const dmgPerMin = p.totalDamageDealtToChampions / (p.timePlayed / 60);
+      dmgTd.textContent = dmgPerMin.toFixed(1);
+      row.appendChild(dmgTd);
 
       // Items column
       const itemsTd = document.createElement('td');
@@ -121,19 +159,19 @@ if (matchForm) {
 
 const matchesEl = document.getElementById('matches');
 
-function displayMatches(data, region) {
+function renderMatches(matches, region) {
   matchesEl.innerHTML = '';
-  if (!data.matches || !Array.isArray(data.matches)) {
-    matchesEl.textContent = 'Unexpected player data';
+  if (!matches || !Array.isArray(matches) || matches.length === 0) {
+    matchesEl.textContent = 'No matches found';
     return;
   }
 
   const table = document.createElement('table');
   table.className = 'table table-custom table-striped';
-  table.innerHTML = '<thead><tr><th>Match ID</th><th>Champion</th><th>K / D / A</th><th>Result</th></tr></thead>';
+  table.innerHTML = '<thead><tr><th>Match ID</th><th>Champion</th><th>K / D / A</th><th>KDA</th><th>CS</th><th>CS/Min</th><th>KP%</th><th>DMG/Min</th><th>Result</th></tr></thead>';
 
   const tbody = document.createElement('tbody');
-  data.matches.forEach(m => {
+  matches.forEach(m => {
     const row = document.createElement('tr');
 
     const matchTd = document.createElement('td');
@@ -145,12 +183,37 @@ function displayMatches(data, region) {
     row.appendChild(matchTd);
 
     const champTd = document.createElement('td');
-    champTd.textContent = m.champion;
+    const champImg = document.createElement('img');
+    champImg.className = 'champion-icon me-1';
+    champImg.src = `${champBase}${m.champion}.png`;
+    champImg.alt = m.champion;
+    champTd.appendChild(champImg);
+    champTd.appendChild(document.createTextNode(m.champion));
     row.appendChild(champTd);
 
     const kdaTd = document.createElement('td');
     kdaTd.textContent = `${m.kills} / ${m.deaths} / ${m.assists}`;
     row.appendChild(kdaTd);
+
+    const ratioTd = document.createElement('td');
+    ratioTd.textContent = m.kda.toFixed(2);
+    row.appendChild(ratioTd);
+
+    const csTd = document.createElement('td');
+    csTd.textContent = m.cs;
+    row.appendChild(csTd);
+
+    const cspmTd = document.createElement('td');
+    cspmTd.textContent = m.cs_per_min.toFixed(1);
+    row.appendChild(cspmTd);
+
+    const kpTd = document.createElement('td');
+    kpTd.textContent = Math.round(m.kp);
+    row.appendChild(kpTd);
+
+    const dmgTd = document.createElement('td');
+    dmgTd.textContent = m.dmg_per_min.toFixed(1);
+    row.appendChild(dmgTd);
 
     const resultTd = document.createElement('td');
     resultTd.textContent = m.win ? 'Win' : 'Loss';
@@ -165,11 +228,40 @@ function displayMatches(data, region) {
 }
 
 const playerForm = document.getElementById('playerForm');
+const filterPanel = document.getElementById('filterPanel');
+const filterChampion = document.getElementById('filterChampion');
+const filterResult = document.getElementById('filterResult');
+const filterKda = document.getElementById('filterKda');
+const applyFiltersBtn = document.getElementById('applyFilters');
+
+function applyFilters(region) {
+  let matches = allMatches;
+  const champVal = filterChampion.value.trim().toLowerCase();
+  const resultVal = filterResult.value;
+  const kdaVal = parseFloat(filterKda.value);
+  matches = matches.filter(m => {
+    if (champVal && !m.champion.toLowerCase().includes(champVal)) return false;
+    if (resultVal === 'win' && !m.win) return false;
+    if (resultVal === 'loss' && m.win) return false;
+    if (!isNaN(kdaVal) && m.kda < kdaVal) return false;
+    return true;
+  });
+  renderMatches(matches, region);
+}
+
+if (applyFiltersBtn) {
+  applyFiltersBtn.addEventListener('click', function() {
+    const region = document.getElementById('playerRegion').value;
+    applyFilters(region);
+  });
+}
+
 if (playerForm) {
   playerForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const region = document.getElementById('playerRegion').value;
     const riotId = document.getElementById('riotId').value.trim();
+    const count = document.getElementById('matchCount').value || 10;
     const out = document.getElementById('playerOutput');
     if (!region || !riotId) {
       out.textContent = 'Region and Riot ID are required';
@@ -177,7 +269,8 @@ if (playerForm) {
     }
     out.textContent = 'Loading...';
     matchesEl.innerHTML = '';
-    fetch(`/api/player?region=${encodeURIComponent(region)}&riot_id=${encodeURIComponent(riotId)}`)
+    filterPanel.style.display = 'none';
+    fetch(`/api/player?region=${encodeURIComponent(region)}&riot_id=${encodeURIComponent(riotId)}&count=${count}`)
       .then(r => r.json())
       .then(data => {
         out.textContent = '';
@@ -185,7 +278,9 @@ if (playerForm) {
           out.textContent = 'Error: ' + data.error;
           return;
         }
-        displayMatches(data, region);
+        allMatches = data.matches;
+        filterPanel.style.display = 'block';
+        applyFilters(region);
       })
       .catch(err => {
         out.textContent = 'Error: ' + err;
@@ -204,9 +299,11 @@ document.addEventListener('DOMContentLoaded', function() {
     matchForm.dispatchEvent(new Event('submit'));
   }
   const riotIdParam = params.get('riot_id') || params.get('riotId');
+  const countParam = params.get('count');
   if (playerForm && riotIdParam) {
     if (regionParam) document.getElementById('playerRegion').value = regionParam;
     document.getElementById('riotId').value = riotIdParam;
+    if (countParam) document.getElementById('matchCount').value = countParam;
     playerForm.dispatchEvent(new Event('submit'));
   }
 });
