@@ -50,3 +50,19 @@ pre {
   height: 24px;
   border-radius: 2px;
 }
+
+.team-blue thead {
+  background-color: #cfe2ff;
+}
+
+.team-red thead {
+  background-color: #f8d7da;
+}
+
+.team-blue tbody tr:nth-child(even) {
+  background-color: #e7f1ff;
+}
+
+.team-red tbody tr:nth-child(even) {
+  background-color: #ffe7e7;
+}

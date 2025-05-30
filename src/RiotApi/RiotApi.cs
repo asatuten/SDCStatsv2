@@ -7,6 +7,7 @@ public class RiotAPI
 {
     private readonly string _apiKey;
     private readonly HttpClient _http;
+    private readonly RateLimiter _limiter = new(20, 100); // 20 req/s, 100 req/2min
     private readonly Dictionary<string, string> _regionMap = new()
     {
         // Americas routing group
@@ -44,6 +45,7 @@ public class RiotAPI
     public async Task<JsonDocument> GetMatchAsync(string region, string matchId)
     {
         var url = $"https://{region}.api.riotgames.com/lol/match/v5/matches/{matchId}";
+        await _limiter.WaitAsync();
         using var resp = await _http.GetAsync(url);
         resp.EnsureSuccessStatusCode();
         var content = await resp.Content.ReadAsStringAsync();
@@ -55,6 +57,7 @@ public class RiotAPI
         var gameNameQ = Uri.EscapeDataString(gameName);
         var tagLineQ = Uri.EscapeDataString(tagLine);
         var url = $"https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{gameNameQ}/{tagLineQ}";
+        await _limiter.WaitAsync();
         using var resp = await _http.GetAsync(url);
         resp.EnsureSuccessStatusCode();
         var content = await resp.Content.ReadAsStringAsync();
@@ -65,6 +68,7 @@ public class RiotAPI
     {
         var cluster = Cluster(region);
         var url = $"https://{cluster}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count={count}";
+        await _limiter.WaitAsync();
         using var resp = await _http.GetAsync(url);
         resp.EnsureSuccessStatusCode();
         var content = await resp.Content.ReadAsStringAsync();

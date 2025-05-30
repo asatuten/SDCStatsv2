@@ -5,6 +5,15 @@ const itemBase = `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/
 const queueNames = { 420: 'Ranked Solo/Duo', 440: 'Ranked Flex', 400: 'Draft Pick', 430: 'Blind Pick', 450: 'ARAM' };
 let allMatches = [];
 
+function calcScore(kda, csPerMin, kp, dmgPerMin) {
+  let score = Math.min(kda / 5, 1) * 4 +
+              Math.min(csPerMin / 10, 1) * 2 +
+              (kp / 100) * 2 +
+              Math.min(dmgPerMin / 1000, 1) * 2;
+  score = Math.min(score, 10);
+  return score;
+}
+
 function displayScoreboard(data, region) {
   scoreboard.innerHTML = '';
   if (!data.info || !Array.isArray(data.info.participants)) {
@@ -30,14 +39,16 @@ function displayScoreboard(data, region) {
 
   Object.entries(teams).forEach(([teamId, players]) => {
     const header = document.createElement('h3');
-    header.textContent = teamId === '100' ? 'Blue Team' : 'Red Team';
+    const isBlue = teamId === '100';
+    header.textContent = isBlue ? 'Blue Team' : 'Red Team';
+    header.className = isBlue ? 'text-primary' : 'text-danger';
     scoreboard.appendChild(header);
 
     const table = document.createElement('table');
-    table.className = 'table table-custom table-striped mb-4';
+    table.className = `table table-custom table-striped mb-4 ${isBlue ? 'team-blue' : 'team-red'}`;
 
     const thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th>Summoner</th><th>Champion</th><th>K / D / A</th><th>KDA</th><th>CS</th><th>CS/Min</th><th>KP%</th><th>DMG/Min</th><th>Items</th></tr>';
+    thead.innerHTML = '<tr><th>Summoner</th><th>Champion</th><th>K / D / A</th><th>KDA</th><th>CS</th><th>CS/Min</th><th>KP%</th><th>DMG/Min</th><th>Score</th><th>Items</th></tr>';
 
     table.appendChild(thead);
 
@@ -107,6 +118,11 @@ function displayScoreboard(data, region) {
       dmgTd.textContent = dmgPerMin.toFixed(1);
       row.appendChild(dmgTd);
 
+      const scoreTd = document.createElement('td');
+      const score = calcScore(parseFloat(ratio), csPerMin, kp, dmgPerMin);
+      scoreTd.textContent = score.toFixed(1);
+      row.appendChild(scoreTd);
+
       // Items column
       const itemsTd = document.createElement('td');
       const items = [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5];
@@ -168,7 +184,7 @@ function renderMatches(matches, region) {
 
   const table = document.createElement('table');
   table.className = 'table table-custom table-striped';
-  table.innerHTML = '<thead><tr><th>Match ID</th><th>Champion</th><th>K / D / A</th><th>KDA</th><th>CS</th><th>CS/Min</th><th>KP%</th><th>DMG/Min</th><th>Result</th></tr></thead>';
+  table.innerHTML = '<thead><tr><th>Match ID</th><th>Champion</th><th>K / D / A</th><th>KDA</th><th>CS</th><th>CS/Min</th><th>KP%</th><th>DMG/Min</th><th>Score</th><th>Result</th></tr></thead>';
 
   const tbody = document.createElement('tbody');
   matches.forEach(m => {
@@ -214,6 +230,10 @@ function renderMatches(matches, region) {
     const dmgTd = document.createElement('td');
     dmgTd.textContent = m.dmg_per_min.toFixed(1);
     row.appendChild(dmgTd);
+
+    const scoreTd = document.createElement('td');
+    scoreTd.textContent = m.score.toFixed(1);
+    row.appendChild(scoreTd);
 
     const resultTd = document.createElement('td');
     resultTd.textContent = m.win ? 'Win' : 'Loss';

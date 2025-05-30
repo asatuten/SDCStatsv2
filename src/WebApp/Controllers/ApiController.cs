@@ -90,6 +90,12 @@ public class ApiController : ControllerBase
                         double kp = teamKills > 0 ? (kills + assists) / teamKills * 100.0 : 0.0;
                         double dmgPerMin = p.GetProperty("totalDamageDealtToChampions").GetInt32() / (timePlayed / 60.0);
                         double goldPerMin = p.GetProperty("goldEarned").GetInt32() / (timePlayed / 60.0);
+                        double score =
+                            Math.Min(kda / 5.0, 1.0) * 4 +
+                            Math.Min(csPerMin / 10.0, 1.0) * 2 +
+                            (kp / 100.0) * 2 +
+                            Math.Min(dmgPerMin / 1000.0, 1.0) * 2;
+                        score = Math.Round(Math.Min(score, 10.0), 1);
                         matches.Add(new
                         {
                             match_id = id,
@@ -103,7 +109,8 @@ public class ApiController : ControllerBase
                             cs_per_min = Math.Round(csPerMin, 1),
                             kp = Math.Round(kp, 0),
                             dmg_per_min = Math.Round(dmgPerMin, 1),
-                            gold_per_min = Math.Round(goldPerMin, 1)
+                            gold_per_min = Math.Round(goldPerMin, 1),
+                            score
                         });
                         break;
                     }
