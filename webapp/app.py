@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 from dotenv import load_dotenv
+
 import sys
 from pathlib import Path
 
@@ -12,6 +13,7 @@ from riot_api import RiotAPI
 
 # Load environment variables from the repository's `.env` file if present.
 load_dotenv(ROOT_DIR / ".env")
+
 
 app = Flask(__name__)
 
