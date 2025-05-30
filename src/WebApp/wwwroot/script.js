@@ -25,11 +25,12 @@ function displayScoreboard(data, region) {
     table.className = 'table table-custom table-striped mb-4';
 
     const thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th>Summoner</th><th>Champion</th><th>K / D / A</th><th>CS</th><th>Items</th></tr>';
+    thead.innerHTML = '<tr><th>Summoner</th><th>Champion</th><th>K / D / A</th><th>KDA</th><th>CS</th><th>CS/Min</th><th>KP%</th><th>DMG/Min</th><th>Items</th></tr>';
 
     table.appendChild(thead);
 
     const tbody = document.createElement('tbody');
+    const teamKills = players.reduce((sum, x) => sum + x.kills, 0);
     players.forEach(p => {
       const row = document.createElement('tr');
 
@@ -59,15 +60,40 @@ function displayScoreboard(data, region) {
 
       row.appendChild(champTd);
 
-      // KDA column
+      // K/D/A column
       const kdaTd = document.createElement('td');
       kdaTd.textContent = `${p.kills} / ${p.deaths} / ${p.assists}`;
       row.appendChild(kdaTd);
 
+      // KDA ratio
+      const ratioTd = document.createElement('td');
+      const ratio = ( (p.kills + p.assists) / Math.max(1, p.deaths) ).toFixed(2);
+      ratioTd.textContent = ratio;
+      row.appendChild(ratioTd);
+
       // CS column
+      const csCount = p.totalMinionsKilled + (p.neutralMinionsKilled || 0);
       const csTd = document.createElement('td');
-      csTd.textContent = p.totalMinionsKilled;
+      csTd.textContent = csCount;
       row.appendChild(csTd);
+
+      // CS per minute
+      const cspmTd = document.createElement('td');
+      const csPerMin = csCount / (p.timePlayed / 60);
+      cspmTd.textContent = csPerMin.toFixed(1);
+      row.appendChild(cspmTd);
+
+      // Kill participation
+      const kpTd = document.createElement('td');
+      const kp = teamKills > 0 ? ((p.kills + p.assists) / teamKills) * 100 : 0;
+      kpTd.textContent = Math.round(kp);
+      row.appendChild(kpTd);
+
+      // Damage per minute
+      const dmgTd = document.createElement('td');
+      const dmgPerMin = p.totalDamageDealtToChampions / (p.timePlayed / 60);
+      dmgTd.textContent = dmgPerMin.toFixed(1);
+      row.appendChild(dmgTd);
 
       // Items column
       const itemsTd = document.createElement('td');
@@ -130,7 +156,7 @@ function displayMatches(data, region) {
 
   const table = document.createElement('table');
   table.className = 'table table-custom table-striped';
-  table.innerHTML = '<thead><tr><th>Match ID</th><th>Champion</th><th>K / D / A</th><th>Result</th></tr></thead>';
+  table.innerHTML = '<thead><tr><th>Match ID</th><th>Champion</th><th>K / D / A</th><th>KDA</th><th>CS</th><th>CS/Min</th><th>KP%</th><th>DMG/Min</th><th>Result</th></tr></thead>';
 
   const tbody = document.createElement('tbody');
   data.matches.forEach(m => {
@@ -151,6 +177,26 @@ function displayMatches(data, region) {
     const kdaTd = document.createElement('td');
     kdaTd.textContent = `${m.kills} / ${m.deaths} / ${m.assists}`;
     row.appendChild(kdaTd);
+
+    const ratioTd = document.createElement('td');
+    ratioTd.textContent = m.kda.toFixed(2);
+    row.appendChild(ratioTd);
+
+    const csTd = document.createElement('td');
+    csTd.textContent = m.cs;
+    row.appendChild(csTd);
+
+    const cspmTd = document.createElement('td');
+    cspmTd.textContent = m.cs_per_min.toFixed(1);
+    row.appendChild(cspmTd);
+
+    const kpTd = document.createElement('td');
+    kpTd.textContent = Math.round(m.kp);
+    row.appendChild(kpTd);
+
+    const dmgTd = document.createElement('td');
+    dmgTd.textContent = m.dmg_per_min.toFixed(1);
+    row.appendChild(dmgTd);
 
     const resultTd = document.createElement('td');
     resultTd.textContent = m.win ? 'Win' : 'Loss';
