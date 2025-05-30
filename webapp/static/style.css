@@ -1,22 +1,52 @@
-.table-custom th, .table-custom td {
-  vertical-align: middle;
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
-.table-custom th {
-  background-color: #f0f0f0;
+pre {
+  background: #f6f6f6;
+  padding: 1rem;
+  border-radius: 0.25rem;
 }
 
 #scoreboard {
   overflow-x: auto;
 }
 
+#scoreboard h3 {
+  margin-top: 1.5rem;
+  margin-bottom: .5rem;
+}
+
+.table-custom {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.table-custom th,
+.table-custom td {
+  vertical-align: middle;
+}
+
+.table-custom th {
+  background-color: #e9ecef;
+  font-weight: 600;
+}
+
+.table-custom td {
+  border-top: 1px solid #dee2e6;
+}
+
 .champion-icon {
   width: 32px;
   height: 32px;
+  border-radius: 4px;
 }
 
 .item-icon {
   width: 24px;
   height: 24px;
+  border-radius: 2px;
 }
-
