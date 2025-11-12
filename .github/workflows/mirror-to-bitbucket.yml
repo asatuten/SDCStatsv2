@@ -1,10 +1,10 @@
-name: Mirror to Bitbucket (SSH)
+name: Mirror to Bitbucket (SSH via service account)
 
 on:
   push:
-    branches: [ "main" ]      # runs when you push to main
+    branches: [ "main" ]
   pull_request:
-    types: [ closed ]         # also runs when PRs are merged into main
+    types: [ closed ]
     branches: [ "main" ]
 
 jobs:
@@ -35,12 +35,11 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
 
-      - name: Add Bitbucket remote
+      - name: Add Bitbucket remote (via service account)
         run: |
           git remote add bb "git@bitbucket.org:asactuten/testrepo.git"
           git remote -v
 
-      # SAFER VERSION (recommended): only push main + tags
       - name: Push main + tags
         run: |
           git push bb refs/heads/main:refs/heads/main
